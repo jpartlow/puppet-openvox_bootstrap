@@ -346,3 +346,67 @@ jobs:
           echo "${output}"
           grep -v 'Installing package.*openvox.*-release' <<<"${output}"
           grep 'Release package already installed' <<<"${output}"
+
+  test-unmanaged-release-package:
+    strategy:
+      matrix:
+        include:
+          - image: rockylinux:9
+            release_package: openvox9-release-el-9.noarch.rpm
+            repo_source: https://yum.voxpupuli.org
+          - image: debian:13
+            release_package: openvox9-release-debian13.deb
+            repo_source: https://apt.voxpupuli.org
+    needs: shellcheck
+    runs-on: ubuntu-latest
+    container: ${{ matrix.image }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: openvox_bootstrap
+      - id: prep
+        uses: ./openvox_bootstrap/.github/actions/container_task_prep
+      - name: Configure the openvox9 repository without the release package
+        shell: bash
+        env:
+          RELEASE_PACKAGE: ${{ matrix.release_package }}
+          REPO_SOURCE: ${{ matrix.repo_source }}
+        run: |-
+          # Simulates a host whose repositories come from a local
+          # mirror or Satellite rather than the release package.
+          wget -q "${REPO_SOURCE}/${RELEASE_PACKAGE}"
+          case "${RELEASE_PACKAGE}" in
+            *.rpm)
+              dnf install -y cpio
+              rpm2cpio "${RELEASE_PACKAGE}" | (cd / && cpio -idm)
+              if rpm -q openvox9-release; then exit 1; fi
+              ;;
+            *.deb)
+              dpkg-deb -x "${RELEASE_PACKAGE}" /
+              apt-get update
+              if dpkg-query -W openvox9-release; then exit 1; fi
+              ;;
+          esac
+      - name: Install openvox-agent without managing the release package
+        shell: bash
+        env:
+          PT_manage_release_package: 'false'
+        run: |-
+          output=$(./openvox_bootstrap/tasks/install_linux.sh)
+          echo "${output}"
+          grep 'Not managing the release package' <<<"${output}"
+          if grep 'Installing package.*openvox.*-release' <<<"${output}"; then
+            echo "The release package should not have been installed"
+            exit 1
+          fi
+      - name: Verify openvox-agent is installed
+        env:
+          PT_version: '9'
+          PT_test: 'gt'
+        run: ./openvox_bootstrap/tasks/check_linux.sh
+      - name: Verify the release package is still not installed
+        shell: bash
+        run: |-
+          if command -v rpm >/dev/null && rpm -q openvox9-release; then exit 1; fi
+          if command -v dpkg-query >/dev/null && dpkg-query -W openvox9-release; then exit 1; fi
+          exit 0

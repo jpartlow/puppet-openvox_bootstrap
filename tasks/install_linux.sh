@@ -11,6 +11,7 @@ yum_source=${PT_yum_source:-https://yum.voxpupuli.org}
 apt_source=${PT_apt_source:-https://apt.voxpupuli.org}
 stop_service=${PT_stop_service:-'false'}
 force_release_package=${PT_force_release_package:-'true'}
+manage_release_package=${PT_manage_release_package:-'true'}
 
 DEFAULT_COLLECTION='openvox9'
 
@@ -111,7 +112,9 @@ set_collection_url "${platform}" "${collection}"
 # Download and install release package.
 # The release package has the repository metadata needed to install
 # packages from the collection using the platform package manager.
-if [[ "${force_release_package}" == 'true' ]] ||
+if [[ "${manage_release_package}" == 'false' ]]; then
+  info 'Not managing the release package; using the configured package repositories'
+elif [[ "${force_release_package}" == 'true' ]] ||
    ! is_release_package_installed "${collection}" "${package_type}"; then
   local_release_package="${tempdir}/${release_package_name}"
   download "${release_package_url}" "${local_release_package}"

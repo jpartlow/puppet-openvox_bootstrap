@@ -51,6 +51,19 @@ can be overridden by setting the `package` parameter to install
 openvox-server, openvoxdb or another package from the openvox
 collection.
 
+If the host's package manager already has a repository providing the
+openvox packages (a local mirror or a Satellite server, for example),
+set `manage_release_package=false` to skip downloading and installing
+the collection's release package and install from the configured
+repositories instead. This is useful on hosts without internet access.
+
+```sh
+bolt task run openvox_bootstrap::install \
+  --targets <target> \
+  --run-as root \
+  manage_release_package=false
+```
+
 See the [install task](./REFERENCE.md#install) for details.
 
 #### Automatic Usage with OpenBolt apply_prep() function
