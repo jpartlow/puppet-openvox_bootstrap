@@ -161,7 +161,7 @@ Whether to stop the given service after install. (Requires puppet on the system.
 
 Data type: `Optional[Boolean]`
 
-Force download and install of the Openvox release package for the collection. If set to false, the script will test first whether the release package is installed.
+DEPRECATED: use manage_release_package. Force download and install of the Openvox release package for the collection. If set to false, the script will test first whether the release package is installed.
 
 ##### `manage_release_package`
 
