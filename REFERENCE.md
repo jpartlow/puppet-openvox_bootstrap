@@ -161,7 +161,13 @@ Whether to stop the given service after install. (Requires puppet on the system.
 
 Data type: `Optional[Boolean]`
 
-Force download and install of the Openvox release package for the collection. If set to false, the script will test first whether the release package is installed.
+DEPRECATED: use manage_release_package. Force download and install of the Openvox release package for the collection. If set to false, the script will test first whether the release package is installed.
+
+##### `manage_release_package`
+
+Data type: `Optional[Boolean]`
+
+Whether to download and install the Openvox release package for the collection. Set to false if the host's package manager is already configured with a repository providing the openvox packages (a local mirror or Satellite, for example). Linux only.
 
 ### <a name="install_build_artifact"></a>`install_build_artifact`
 

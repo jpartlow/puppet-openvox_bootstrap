@@ -31,7 +31,12 @@
       "default": false
     },
     "force_release_package": {
-      "description": "Force download and install of the Openvox release package for the collection. If set to false, the script will test first whether the release package is installed.",
+      "description": "DEPRECATED: use manage_release_package. Force download and install of the Openvox release package for the collection. If set to false, the script will test first whether the release package is installed.",
+      "type": "Optional[Boolean]",
+      "default": true
+    },
+    "manage_release_package": {
+      "description": "Whether to download and install the Openvox release package for the collection. Set to false if the host's package manager is already configured with a repository providing the openvox packages (a local mirror or Satellite, for example). Linux only.",
       "type": "Optional[Boolean]",
       "default": true
     }
