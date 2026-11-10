@@ -28,8 +28,8 @@ $default_collection = "openvox9"
 # XXX: Move this metadata out to the openvox-agent build pipeline by
 # way of a latest package symlink or similar artifact.
 $latest_versions = @{
-  "openvox8" = "8.29.0"
-  "openvox9" = "9.0.0"
+  "openvox8" = "8.32.0"
+  "openvox9" = "9.3.0"
 }
 
 $ErrorActionPreference = "Stop"
